@@ -1,7 +1,7 @@
 2012-04-16:: Version 2.7
 * Adapted to work with both Ruby 1.9 and Ruby 1.8 including fixed to_report 
  (thanks to manveru for the help).
-* Added an example on how to use KirbyBase with Sinatra
+* Added an example to use KirbyBase with Sinatra
 * This is mainly a maintenance relese. Please report any issue to
   https://github.com/gurugeek/KirbyBase
 
