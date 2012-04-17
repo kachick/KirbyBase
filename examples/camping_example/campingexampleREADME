@@ -1,0 +1,35 @@
+CAMPING EXAMPLE README
+======================
+
+by Gurugeek 17 April 2012
+
+
+This is an example on how to use kirbybase with the Camping ruby micro framework (http://camping.io).
+If you are implementing a simple, small to mid-size project this would be a good combination: a simple framework with a simple embedded database without having to use ActiveRecord or SQLite.
+
+Compared to SQLite (that is default on Camping) you have the possibility to modify the database by simply opening the file stocks.tbl with any text editior. This is addition of the NoSQL format used by KirbyBase that is using a "pure" ruby sintax.
+
+
+Requirements
+Camping and Camping-kirbybase gems
+install with 
+
+gem install camping-omnibus
+gem install camping-kirbybase 
+
+Some details
+
+In the File stocks_table_creation.rb you have a simple example on how to create a table, insert records, fetch them and even display them in a nicely formatted report. From command line you simply run 
+ruby stocks_table_creation.rb 
+to have your table and records ready for use.
+
+The sample record set includes 4 U.S. stocks with the real closing price of April 16 2012. 
+
+You can notice that the filed :Calculated=>'quantity*tradeprice' KirbyBase will automatically compute the total portfolio value of a given position (stocks price x number of stocks in your position). 
+
+campingexample.rb contains the camping app displaying the stocks list from the database. Run with the command camping campingexample.rb 
+This folder has all it needs to run the camping sample app immediately !
+
+
+
+

@@ -3,19 +3,22 @@ require 'camping-kirbybase'
 
 Camping.goes :CampingStocks
 
+
+# Here we do not use activerecord
 module CampingStocks
 
   module Models 
   end   
+ 
     
   module Controllers
-      
+ # we define the index     
     class Index < R '/'
       def get
         render :index 
       end
     end
-  
+   # and other pages that we can just call with def pagename 
     class Page < R '/(\w+)'
       def get(page_name)
         render page_name
@@ -27,6 +30,8 @@ module CampingStocks
     def layout
       self << yield
     end
+    # inside the index we now create a new KirbyBase, open the table and fetch the results
+    # we then display them using the default markaby template engine of camping
     
     def index
       kirby = KirbyBase.new
