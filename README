@@ -1,6 +1,6 @@
 = KirbyBase 2.7
 
-A small, plain-text, dbms written in Ruby.  It can be used either embedded 
+A small, NoSQL, plain-text, dbms written in Ruby.  It can be used either embedded 
 or client/server.  
 
 
