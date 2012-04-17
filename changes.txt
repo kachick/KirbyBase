@@ -1,4 +1,4 @@
-2012-04-16:: Version 2.7
+2012-04-16:: Version 2.6.1
 * Adapted to work with both Ruby 1.9 and Ruby 1.8 including fixed to_report 
  (thanks to manveru for the help).
 * Added an example on how to use KirbyBase with Camping (ruby microframework)
