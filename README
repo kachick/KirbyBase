@@ -1,13 +1,12 @@
-= KirbyBase 2.6
+= KirbyBase 2.7
 
 A small, plain-text, dbms written in Ruby.  It can be used either embedded 
 or client/server.  
 
 
 == Installation
-
-Unpack the file you downloaded.  Execute "ruby install.rb" or simply make 
-sure kirbybase.rb is somewhere in your Ruby library path.
+You can install Kirbybase via ruby gems:
+gem install KirbyBase 
 
 
 == Documentation
@@ -34,7 +33,7 @@ See the examples directory for examples of how to use KirbyBase.
 == Author
 
 Written in 2005 by Jamey Cribbs <mailto:jcribbs@twmi.rr.com>
-
+version 2.7 release & maintenance by gurugeek
 
 == License
 
@@ -58,9 +57,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 == Feedback
 
 Please send any bug reports, suggestions, ideas,
-improvements, to:
-
-jcribbs@netpromi.com
+improvements through the github repository
+https://github.com/gurugeek/KirbyBase
 
 == Home Page
 

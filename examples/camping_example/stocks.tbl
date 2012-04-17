@@ -1,0 +1,5 @@
+000004|000000|Struct|recno:Integer|name:String|ticker:String|tradeprice:Float|tradedate:Date|quantity:Integer|totalposition:Float:Calculated->quantity*tradeprice
+1|Coca-Cola|KO|72|2012-04-17|100|kb_nil
+2|Apple|AAPL|580.13|2012-04-17|10|kb_nil
+3|IBM|IBM|202.72|2012-04-17|20|kb_nil
+4|Amazon|AMZN|185.5|2012-04-17|45|kb_nil
