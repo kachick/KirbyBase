@@ -1,10 +1,8 @@
 class KBIndex
+
   include KBTypeConversionsMixin
   include KBEncryptionMixin
 
-  #-----------------------------------------------------------------------
-  # initialize
-  #-----------------------------------------------------------------------
   def initialize(table, index_fields)
     @last_update = Time.new
     @idx_arr = []
@@ -16,23 +14,14 @@ class KBIndex
      table.field_types[table.field_names.index(i)]}
   end
 
-  #-----------------------------------------------------------------------
-  # get_idx
-  #-----------------------------------------------------------------------
   def get_idx
-    return @idx_arr
+    @idx_arr
   end
 
-  #-----------------------------------------------------------------------
-  # get_timestamp
-  #-----------------------------------------------------------------------
   def get_timestamp
-    return @last_update
+    @last_update
   end
 
-  #-----------------------------------------------------------------------
-  # rebuild
-  #-----------------------------------------------------------------------
   def rebuild(fptr)
     @idx_arr.clear
 
@@ -64,33 +53,21 @@ class KBIndex
     @last_update = Time.new
   end
 
-  #-----------------------------------------------------------------------
-  # add_index_rec
-  #-----------------------------------------------------------------------
   def add_index_rec(rec)
     @last_upddate = Time.new if append_new_rec_to_index_array(rec)
   end
 
-  #-----------------------------------------------------------------------
-  # delete_index_rec
-  #-----------------------------------------------------------------------
   def delete_index_rec(recno)
     i = @idx_arr.rassoc(recno.to_i)
     @idx_arr.delete_at(@idx_arr.index(i)) unless i.nil?
     @last_update = Time.new
   end
 
-  #-----------------------------------------------------------------------
-  # update_index_rec
-  #-----------------------------------------------------------------------
   def update_index_rec(rec)
     delete_index_rec(rec.first.to_i)
     add_index_rec(rec)
   end
 
-  #-----------------------------------------------------------------------
-  # append_new_rec_to_index_array
-  #-----------------------------------------------------------------------
   def append_new_rec_to_index_array(rec)
     idx_rec = []
     @col_poss.zip(@col_types).each do |col_pos, col_type|
@@ -101,6 +78,7 @@ class KBIndex
 
     idx_rec << rec.first.to_i
     @idx_arr << idx_rec
-    return true
+    true
   end
+
 end

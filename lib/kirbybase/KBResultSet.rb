@@ -1,14 +1,9 @@
 class KBResultSet
-  #-----------------------------------------------------------------------
-  # KBResultSet.reverse
-  #-----------------------------------------------------------------------
+
   def KBResultSet.reverse(sort_field)
     return [sort_field, :desc]
   end
 
-  #-----------------------------------------------------------------------
-  # initialize
-  #-----------------------------------------------------------------------
   def initialize(table, filter, filter_types, *values)
     @table = table
     @filter = filter
@@ -30,9 +25,6 @@ class KBResultSet
     end
   end
 
-  #-----------------------------------------------------------------------
-  # to_ary
-  #-----------------------------------------------------------------------
   def to_ary
     @values.dup
   end
@@ -57,10 +49,6 @@ class KBResultSet
     @values[key]
   end
 
-  #-----------------------------------------------------------------------
-  # set
-  #-----------------------------------------------------------------------
-  #++
   # Update record(s) in table, return number of records updated.
   #
   def set(*updates, &update_cond)
@@ -77,9 +65,6 @@ class KBResultSet
     end
   end
 
-  #-----------------------------------------------------------------------
-  # sort
-  #-----------------------------------------------------------------------
   def sort(*sort_fields)
     sort_fields_arrs = []
     sort_fields.each do |f|
@@ -120,12 +105,9 @@ class KBResultSet
       x <=> y
     }
 
-    return self.class.new(@table, @filter, @filter_types, *sorted)
+    self.class.new(@table, @filter, @filter_types, *sorted)
   end
 
-  #-----------------------------------------------------------------------
-  # to_report
-  #-----------------------------------------------------------------------
   def to_report(recs_per_page=0, print_rec_sep=false)
     result = collect { |r| @filter.collect {|f| r.send(f)} }
 
@@ -171,6 +153,8 @@ class KBResultSet
         recs_on_page_count = 0
       end
     end
-    return output
+
+    output
   end
+
 end

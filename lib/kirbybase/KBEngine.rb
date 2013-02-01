@@ -1,4 +1,5 @@
 class KBEngine
+
   include DRb::DRbUndumped
   include KBTypeConversionsMixin
   include KBEncryptionMixin
@@ -6,16 +7,10 @@ class KBEngine
   # Make constructor private.
   private_class_method :new
 
-  #-----------------------------------------------------------------------
-  # KBEngine.create_called_from_database_instance
-  #-----------------------------------------------------------------------
   def KBEngine.create_called_from_database_instance(db)
-    return new(db)
+    new(db)
   end
 
-  #-----------------------------------------------------------------------
-  # initialize
-  #-----------------------------------------------------------------------
   def initialize(db)
     @db = db
     @recno_indexes = {}
@@ -25,9 +20,6 @@ class KBEngine
     @mutex_hash = {} if @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # init_recno_index
-  #-----------------------------------------------------------------------
   def init_recno_index(table)
     return if recno_index_exists?(table)
 
@@ -37,46 +29,28 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # rebuild_recno_index
-  #-----------------------------------------------------------------------
   def rebuild_recno_index(table)
     with_write_locked_table(table) do |fptr|
       @recno_indexes[table.name].rebuild(fptr)
     end
   end
 
-  #-----------------------------------------------------------------------
-  # remove_recno_index
-  #-----------------------------------------------------------------------
   def remove_recno_index(tablename)
     @recno_indexes.delete(tablename)
   end
 
-  #-----------------------------------------------------------------------
-  # update_recno_index
-  #-----------------------------------------------------------------------
   def update_recno_index(table, recno, fpos)
     @recno_indexes[table.name].update_index_rec(recno, fpos)
   end
 
-  #-----------------------------------------------------------------------
-  # recno_index_exists?
-  #-----------------------------------------------------------------------
   def recno_index_exists?(table)
     @recno_indexes.include?(table.name)
   end
 
-  #-----------------------------------------------------------------------
-  # get_recno_index
-  #-----------------------------------------------------------------------
   def get_recno_index(table)
     return @recno_indexes[table.name].get_idx
   end
 
-  #-----------------------------------------------------------------------
-  # init_index
-  #-----------------------------------------------------------------------
   def init_index(table, index_fields)
     return if index_exists?(table, index_fields)
 
@@ -88,9 +62,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # rebuild_index
-  #-----------------------------------------------------------------------
   def rebuild_index(table, index_fields)
     with_write_locked_table(table) do |fptr|
       @indexes["#{table.name}_#{index_fields.join('_')}".to_sym
@@ -98,17 +69,11 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # remove_indexes
-  #-----------------------------------------------------------------------
   def remove_indexes(tablename)
     re_table_name = Regexp.new(tablename.to_s)
     @indexes.delete_if { |k,v| k.to_s =~ re_table_name }
   end
 
-  #-----------------------------------------------------------------------
-  # add_to_indexes
-  #-----------------------------------------------------------------------
   def add_to_indexes(table, rec, fpos)
     @recno_indexes[table.name].add_index_rec(rec.first, fpos)
 
@@ -118,9 +83,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # delete_from_indexes
-  #-----------------------------------------------------------------------
   def delete_from_indexes(table, rec, fpos)
     @recno_indexes[table.name].delete_index_rec(rec.recno)
 
@@ -130,9 +92,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # update_to_indexes
-  #-----------------------------------------------------------------------
   def update_to_indexes(table, rec)
     re_table_name = Regexp.new(table.name.to_s)
     @indexes.each_pair do |key, index|
@@ -140,37 +99,22 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # index_exists?
-  #-----------------------------------------------------------------------
   def index_exists?(table, index_fields)
     @indexes.include?("#{table.name}_#{index_fields.join('_')}".to_sym)
   end
 
-  #-----------------------------------------------------------------------
-  # get_index
-  #-----------------------------------------------------------------------
   def get_index(table, index_name)
-    return @indexes["#{table.name}_#{index_name}".to_sym].get_idx
+    @indexes["#{table.name}_#{index_name}".to_sym].get_idx
   end
 
-  #-----------------------------------------------------------------------
-  # get_index_timestamp
-  #-----------------------------------------------------------------------
   def get_index_timestamp(table, index_name)
-    return @indexes["#{table.name}_#{index_name}".to_sym].get_timestamp
+    @indexes["#{table.name}_#{index_name}".to_sym].get_timestamp
   end
 
-  #-----------------------------------------------------------------------
-  # table_exists?
-  #-----------------------------------------------------------------------
   def table_exists?(tablename)
-    return File.exists?(File.join(@db.path, tablename.to_s + @db.ext))
+    File.exists?(File.join(@db.path, tablename.to_s + @db.ext))
   end
 
-  #-----------------------------------------------------------------------
-  # tables
-  #-----------------------------------------------------------------------
   def tables
     list = []
     Dir.foreach(@db.path) { |filename|
@@ -180,13 +124,8 @@ class KBEngine
     return list
   end
 
-  #-----------------------------------------------------------------------
-  # new_table
-  #-----------------------------------------------------------------------
-  #++
   # Create physical file holding table. This table should not be directly
   # called in your application, but only called by #create_table.
-  #
   def new_table(name, field_defs, encrypt, record_class)
     # Header rec consists of last record no. used, delete count, and
     # all field names/types.  Here, I am inserting the 'recno' field
@@ -204,9 +143,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # delete_table
-  #-----------------------------------------------------------------------
   def delete_table(tablename)
     with_write_lock(tablename) do
       File.delete(File.join(@db.path, tablename.to_s + @db.ext))
@@ -216,16 +152,10 @@ class KBEngine
     end
   end
 
-  #----------------------------------------------------------------------
-  # get_total_recs
-  #----------------------------------------------------------------------
   def get_total_recs(table)
-    return get_recs(table).size
+    get_recs(table).size
   end
 
-  #-----------------------------------------------------------------------
-  # reset_recno_ctr
-  #-----------------------------------------------------------------------
   def reset_recno_ctr(table)
     with_write_locked_table(table) do |fptr|
       encrypted, header_line = get_header_record(table, fptr)
@@ -236,9 +166,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # get_header_vars
-  #-----------------------------------------------------------------------
   def get_header_vars(table)
     with_table(table) do |fptr|
       encrypted, line = get_header_record(table, fptr)
@@ -278,9 +205,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # get_recs
-  #-----------------------------------------------------------------------
   def get_recs(table)
     encrypted = table.encrypted?
     recs = []
@@ -308,9 +232,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # get_recs_by_recno
-  #-----------------------------------------------------------------------
   def get_recs_by_recno(table, recnos)
     encrypted = table.encrypted?
     recs = []
@@ -338,9 +259,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # get_rec_by_recno
-  #-----------------------------------------------------------------------
   def get_rec_by_recno(table, recno)
     encrypted = table.encrypted?
     recno_idx = get_recno_index(table)
@@ -351,20 +269,15 @@ class KBEngine
       fptr.seek(recno_idx[recno])
       rec, line_length = line_to_rec(fptr.readline, encrypted)
 
-      raise "Recno Index Corrupt for table %s!" % table.name if \
-       rec.empty?
+      raise "Recno Index Corrupt for table %s!" % table.name if rec.empty?
 
-      raise "Recno Index Corrupt for table %s!" % table.name unless \
-       rec[0].to_i == recno
+      raise "Recno Index Corrupt for table %s!" % table.name unless rec[0].to_i == recno
 
       rec << recno_idx[recno] << line_length
       return rec
     end
   end
 
-  #-----------------------------------------------------------------------
-  # line_to_rec
-  #-----------------------------------------------------------------------
   def line_to_rec(line, encrypted)
     line.chomp!
     line_length = line.size
@@ -375,9 +288,6 @@ class KBEngine
     return line.split('|', -1), line_length
   end
 
-  #-----------------------------------------------------------------------
-  # insert_record
-  #-----------------------------------------------------------------------
   def insert_record(table, rec)
     with_write_locked_table(table) do |fptr|
       # Auto-increment the record number field.
@@ -399,9 +309,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # update_records
-  #-----------------------------------------------------------------------
   def update_records(table, recs)
     with_write_locked_table(table) do |fptr|
       recs.each do |rec|
@@ -434,9 +341,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # delete_records
-  #-----------------------------------------------------------------------
   def delete_records(table, recs)
     with_write_locked_table(table) do |fptr|
       recs.each do |rec|
@@ -453,9 +357,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_type
-  #-----------------------------------------------------------------------
   def change_column_type(table, col_name, col_type)
     col_index = table.field_names.index(col_name)
     with_write_lock(table.name) do
@@ -497,9 +398,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # rename_column
-  #-----------------------------------------------------------------------
   def rename_column(table, old_col_name, new_col_name)
     col_index = table.field_names.index(old_col_name)
     with_write_lock(table.name) do
@@ -541,9 +439,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # add_column
-  #-----------------------------------------------------------------------
   def add_column(table, field_def, after)
     # Find the index position of where to insert the column, either at
     # the end (-1) or after the field specified.
@@ -610,9 +505,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # drop_column
-  #-----------------------------------------------------------------------
   def drop_column(table, col_name)
     col_index = table.field_names.index(col_name)
     with_write_lock(table.name) do
@@ -663,18 +555,12 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # rename_table
-  #-----------------------------------------------------------------------
   def rename_table(old_tablename, new_tablename)
     old_full_path = File.join(@db.path, old_tablename.to_s + @db.ext)
     new_full_path = File.join(@db.path, new_tablename.to_s + @db.ext)
     File.rename(old_full_path, new_full_path)
   end
 
-  #-----------------------------------------------------------------------
-  # add_index
-  #-----------------------------------------------------------------------
   def add_index(table, col_names, index_no)
     with_write_lock(table.name) do
       fptr = open(table.filename, 'r')
@@ -716,9 +602,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # drop_index
-  #-----------------------------------------------------------------------
   def drop_index(table, col_names)
     with_write_lock(table.name) do
       fptr = open(table.filename, 'r')
@@ -765,9 +648,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_default_value
-  #-----------------------------------------------------------------------
   def change_column_default_value(table, col_name, value)
     with_write_lock(table.name) do
       fptr = open(table.filename, 'r')
@@ -832,9 +712,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_required
-  #-----------------------------------------------------------------------
   def change_column_required(table, col_name, required)
     with_write_lock(table.name) do
       fptr = open(table.filename, 'r')
@@ -898,9 +775,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # pack_table
-  #-----------------------------------------------------------------------
   def pack_table(table)
     with_write_lock(table.name) do
       fptr = open(table.filename, 'r')
@@ -952,9 +826,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # read_memo_file
-  #-----------------------------------------------------------------------
   def read_memo_file(filepath)
     begin
       f = File.new(File.join(@db.memo_blob_path, filepath))
@@ -964,9 +835,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # write_memo_file
-  #-----------------------------------------------------------------------
   def write_memo_file(filepath, contents)
     begin
       f = File.new(File.join(@db.memo_blob_path, filepath), 'w')
@@ -976,9 +844,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # read_blob_file
-  #-----------------------------------------------------------------------
   def read_blob_file(filepath)
     begin
       f = File.new(File.join(@db.memo_blob_path, filepath), 'rb')
@@ -988,9 +853,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # write_blob_file
-  #-----------------------------------------------------------------------
   def write_blob_file(filepath, contents)
     begin
       f = File.new(File.join(@db.memo_blob_path, filepath), 'wb')
@@ -1000,15 +862,8 @@ class KBEngine
     end
   end
 
-
-  #-----------------------------------------------------------------------
-  # PRIVATE METHODS
-  #-----------------------------------------------------------------------
   private
 
-  #-----------------------------------------------------------------------
-  # with_table
-  #-----------------------------------------------------------------------
   def with_table(table, access='r')
     begin
       yield fptr = open(table.filename, access)
@@ -1017,9 +872,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # with_write_lock
-  #-----------------------------------------------------------------------
   def with_write_lock(tablename)
     begin
       write_lock(tablename) if @db.server?
@@ -1029,9 +881,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # with_write_locked_table
-  #-----------------------------------------------------------------------
   def with_write_locked_table(table, access='r+')
     begin
       write_lock(table.name) if @db.server?
@@ -1042,9 +891,6 @@ class KBEngine
     end
   end
 
-  #-----------------------------------------------------------------------
-  # write_lock
-  #-----------------------------------------------------------------------
   def write_lock(tablename)
     # Unless an key already exists in the hash holding mutex records
     # for this table, create a write key for this table in the mutex
@@ -1056,9 +902,6 @@ class KBEngine
     return true
   end
 
-  #----------------------------------------------------------------------
-  # write_unlock
-  #----------------------------------------------------------------------
   def write_unlock(tablename)
     # Unlock the write mutex for this table.
     @mutex_hash[tablename].unlock
@@ -1066,9 +909,6 @@ class KBEngine
     return true
   end
 
-  #----------------------------------------------------------------------
-  # write_record
-  #----------------------------------------------------------------------
   def write_record(table, fptr, pos, record)
     if table.encrypted?
       temp_rec = encrypt_str(record)
@@ -1089,9 +929,6 @@ class KBEngine
     end
   end
 
-  #----------------------------------------------------------------------
-  # write_header_record
-  #----------------------------------------------------------------------
   def write_header_record(table, fptr, record)
     fptr.seek(0)
 
@@ -1102,24 +939,18 @@ class KBEngine
     end
   end
 
-  #----------------------------------------------------------------------
-  # get_header_record
-  #----------------------------------------------------------------------
   def get_header_record(table, fptr)
     fptr.seek(0)
 
     line = fptr.readline.chomp
 
     if line[0..0] == 'Z'
-      return [true, unencrypt_str(line[1..-1])]
+      [true, unencrypt_str(line[1..-1])]
     else
-      return [false, line]
+      [false, line]
     end
   end
 
-  #-----------------------------------------------------------------------
-  # incr_rec_no_ctr
-  #-----------------------------------------------------------------------
   def incr_rec_no_ctr(table, fptr)
     encrypted, header_line = get_header_record(table, fptr)
     last_rec_no, rest_of_line = header_line.split('|', 2)
@@ -1129,12 +960,9 @@ class KBEngine
      rest_of_line].join('|'))
 
     # Return the new recno.
-    return last_rec_no
+    last_rec_no
   end
 
-  #-----------------------------------------------------------------------
-  # incr_del_ctr
-  #-----------------------------------------------------------------------
   def incr_del_ctr(table, fptr)
     encrypted, header_line = get_header_record(table, fptr)
     last_rec_no, del_ctr, rest_of_line = header_line.split('|', 3)
@@ -1143,6 +971,7 @@ class KBEngine
     write_header_record(table, fptr, [last_rec_no, '%06d' % del_ctr,
      rest_of_line].join('|'))
 
-    return true
+    true
   end
+
 end

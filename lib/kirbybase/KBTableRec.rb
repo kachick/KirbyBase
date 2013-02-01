@@ -1,4 +1,5 @@
 class KBTableRec
+
   include KBTypeConversionsMixin
 
   def initialize(tbl)
@@ -16,4 +17,5 @@ class KBTableRec
       send("#{fn}=", kb_nil)
     end
   end
+
 end

@@ -1,10 +1,13 @@
 class KBNilClass
+
   include Comparable
 
   class << self
+
     def new
       @kb_nil ||= KBNilClass.allocate
     end
+
   end
 
   def inspect
@@ -51,4 +54,5 @@ class KBNilClass
       self
     end
   end
+
 end

@@ -1,31 +1,11 @@
-# Copyright (c) 2005 NetPro Technologies, LLC
-# Distributes under the same terms as Ruby License
-
-require 'date'
-require 'time'
-require 'drb'
-require 'fileutils'
-require 'yaml'
-require 'csv'
-
-require_relative 'KBTypeConversionsMixin'
-
-
 module KBEncryptionMixin
-  EN_STR = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' + \
-   '0123456789.+-,$:|&;_ '
+  EN_STR = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' + '0123456789.+-,$:|&;_ '
   EN_STR_LEN = EN_STR.size
   EN_KEY1 = ")2VER8GE\"87-E\n"       #*** DO NOT CHANGE ***
   EN_KEY = EN_KEY1.unpack("u")[0]
   EN_KEY_LEN = EN_KEY.size
 
-
-  #-----------------------------------------------------------------------
-  # encrypt_str
-  #-----------------------------------------------------------------------
-  #++
   # Returns an encrypted string, using the Vignere Cipher.
-  #
   def encrypt_str(s)
     new_str = ''
     i_key = -1
@@ -48,12 +28,7 @@ module KBEncryptionMixin
     return new_str
   end
 
-  #-----------------------------------------------------------------------
-  # unencrypt_str
-  #-----------------------------------------------------------------------
-  #++
   # Returns an unencrypted string, using the Vignere Cipher.
-  #
   def unencrypt_str(s)
     new_str = ''
     i_key = -1
@@ -73,6 +48,8 @@ module KBEncryptionMixin
       i_from_str = i_from_str + EN_STR_LEN if i_from_str < 0
       new_str << EN_STR[i_from_str]
     end
-    return new_str
+
+    new_str
   end
+
 end

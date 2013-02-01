@@ -1,4 +1,5 @@
 class KBTable
+
   include DRb::DRbUndumped
   include KBTypeConversionsMixin
 
@@ -16,27 +17,17 @@ class KBTable
   attr_reader :filename, :name, :table_class, :db, :lookup_key, \
                :last_rec_no, :del_ctr
 
-  #-----------------------------------------------------------------------
-  # KBTable.valid_field_type?
-  #-----------------------------------------------------------------------
-  #++
   # Return true if valid field type.
   #
   # *field_type*:: Symbol specifying field type.
-  #
   def KBTable.valid_field_type?(field_type)
     VALID_FIELD_TYPES.include?(field_type)
   end
 
-  #-----------------------------------------------------------------------
-  # KBTable.valid_data_type?
-  #-----------------------------------------------------------------------
-  #++
   # Return true if data is correct type, false otherwise.
   #
   # *data_type*:: Symbol specifying data type.
   # *value*:: Value to convert to String.
-  #
   def KBTable.valid_data_type?(data_type, value)
     case data_type
     when /:String|:Blob/
@@ -65,50 +56,30 @@ class KBTable
     return true
   end
 
-  #-----------------------------------------------------------------------
-  # KBTable.valid_default_type?
-  #-----------------------------------------------------------------------
-  #++
   # Return true if valid default type.
   #
   # *field_type*:: Symbol specifying field type.
-  #
   def KBTable.valid_default_type?(field_type)
     VALID_DEFAULT_TYPES.include?(field_type)
   end
 
-  #-----------------------------------------------------------------------
-  # KBTable.valid_index_type?
-  #-----------------------------------------------------------------------
-  #++
   # Return true if valid index type.
   #
   # *field_type*:: Symbol specifying field type.
-  #
   def KBTable.valid_index_type?(field_type)
     VALID_INDEX_TYPES.include?(field_type)
   end
 
-  #-----------------------------------------------------------------------
-  # create_called_from_database_instance
-  #-----------------------------------------------------------------------
-  #++
   # Return a new instance of KBTable.  Should never be called directly by
   # your application.  Should only be called from KirbyBase#get_table.
-  #
   def KBTable.create_called_from_database_instance(db, name, filename)
     return new(db, name, filename)
   end
 
-  #-----------------------------------------------------------------------
-  # initialize
-  #-----------------------------------------------------------------------
-  #++
   # This has been declared private so user's cannot create new instances
   # of KBTable from their application.  A user gets a handle to a KBTable
   # instance by calling KirbyBase#get_table for an existing table or
   # KirbyBase.create_table for a new table.
-  #
   def initialize(db, name, filename)
     @db = db
     @name = name
@@ -126,12 +97,7 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # encrypted?
-  #-----------------------------------------------------------------------
-  #++
   # Returns true if table is encrypted.
-  #
   def encrypted?
     if @encrypted
       return true
@@ -140,77 +106,42 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # field_names
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field names.
-  #
   def field_names
     return @field_names
   end
 
-  #-----------------------------------------------------------------------
-  # field_types
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field types.
-  #
   def field_types
     return @field_types
   end
 
-  #-----------------------------------------------------------------------
-  # field_extras
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field extras.
-  #
   def field_extras
     return @field_extras
   end
 
-  #-----------------------------------------------------------------------
-  # field_indexes
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field indexes.
-  #
   def field_indexes
     return @field_indexes
   end
 
-  #-----------------------------------------------------------------------
-  # field_defaults
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field defaults.
-  #
   def field_defaults
     return @field_defaults
   end
 
-  #-----------------------------------------------------------------------
-  # field_requireds
-  #-----------------------------------------------------------------------
-  #++
   # Return array containing table field requireds.
-  #
   def field_requireds
     return @field_requireds
   end
 
-  #-----------------------------------------------------------------------
-  # insert
-  #-----------------------------------------------------------------------
-  #++
   # Insert a new record into a table, return unique record number.
   #
   # *data*:: Array, Hash, Struct instance containing field values of
   #      new record.
   # *insert_proc*:: Proc instance containing insert code. This and the
   #         data parameter are mutually exclusive.
-  #
   def insert(*data, &insert_proc)
     raise 'Cannot specify both a hash/array/struct and a ' + \
      'proc for method #insert!' unless data.empty? or insert_proc.nil?
@@ -259,15 +190,10 @@ class KBTable
     return new_recno
   end
 
-  #-----------------------------------------------------------------------
-  # update_all
-  #-----------------------------------------------------------------------
-  #++
   # Return array of records (Structs) to be updated, in this case all
   # records.
   #
   # *updates*:: Hash or Struct containing updates.
-  #
   def update_all(*updates, &update_proc)
     raise 'Cannot specify both a hash/array/struct and a ' + \
      'proc for method #update_all!' unless updates.empty? or \
@@ -287,15 +213,10 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # update
-  #-----------------------------------------------------------------------
-  #++
   # Return array of records (Structs) to be updated based on select cond.
   #
   # *updates*:: Hash or Struct containing updates.
   # *select_cond*:: Proc containing code to select records to update.
-  #
   def update(*updates, &select_cond)
     raise ArgumentError, "Must specify select condition code " + \
      "block.  To update all records, use #update_all instead." if \
@@ -318,29 +239,19 @@ class KBTable
     set(result_set, updates)
   end
 
-  #-----------------------------------------------------------------------
-  # []=
-  #-----------------------------------------------------------------------
-  #++
   # Update record whose recno field equals index.
   #
   # *index*:: Integer specifying recno you wish to select.
   # *updates*:: Hash, Struct, or Array containing updates.
-  #
   def []=(index, updates)
     return update(updates) { |r| r.recno == index }
   end
 
-  #-----------------------------------------------------------------------
-  # set
-  #-----------------------------------------------------------------------
-  #++
   # Set fields of records to updated values.  Returns number of records
   # updated.
   #
   # *recs*:: Array of records (Structs) that will be updated.
   # *data*:: Hash, Struct, Proc containing updates.
-  #
   def set(recs, data)
     # If updates are not in the form of a Proc, convert updates, which
     # could be an array, a hash, or a Struct into a common format (i.e.
@@ -403,17 +314,12 @@ class KBTable
     @db.engine.update_records(self, updated_recs)
 
     # Return the number of records updated.
-    return recs.size
+    recs.size
   end
 
-  #-----------------------------------------------------------------------
-  # delete
-  #-----------------------------------------------------------------------
-  #++
   # Delete records from table and return # deleted.
   #
   # *select_cond*:: Proc containing code to select records.
-  #
   def delete(&select_cond)
     raise ArgumentError, 'Must specify select condition code ' + \
      'block.  To delete all records, use #clear instead.' if \
@@ -426,35 +332,25 @@ class KBTable
     @db.engine.delete_records(self, result_set)
 
     # Return the number of records deleted.
-    return result_set.size
+    result_set.size
   end
 
-  #-----------------------------------------------------------------------
-  # clear
-  #-----------------------------------------------------------------------
-  #++
   # Delete all records from table. You can also use #delete_all.
   #
   # *reset_recno_ctr*:: true/false specifying whether recno counter should
   #           be reset to 0.
-  #
   def clear(reset_recno_ctr=true)
     recs_deleted = delete { true }
     pack
 
     @db.engine.reset_recno_ctr(self) if reset_recno_ctr
     update_header_vars
-    return recs_deleted
+    recs_deleted
   end
 
-  #-----------------------------------------------------------------------
-  # []
-  #-----------------------------------------------------------------------
-  #++
   # Return the record(s) whose recno field is included in index.
   #
   # *index*:: Array of Integer(s) specifying recno(s) you wish to select.
-  #
   def [](*index)
     return nil if index[0].nil?
 
@@ -465,13 +361,9 @@ class KBTable
       index.include?(r.recno)
     }
 
-    return recs
+    recs
   end
 
-  #-----------------------------------------------------------------------
-  # select
-  #-----------------------------------------------------------------------
-  #++
   # Return array of records (Structs) matching select conditions.
   #
   # *filter*:: List of field names (Symbols) to include in result set.
@@ -489,13 +381,9 @@ class KBTable
 
     # Get all records that match the selection criteria and
     # return them in an array of Struct instances.
-    return get_matches(:select, filter, select_cond)
+    get_matches(:select, filter, select_cond)
   end
 
-  #-----------------------------------------------------------------------
-  # select_by_recno_index
-  #-----------------------------------------------------------------------
-  #++
   # Return array of records (Structs) matching select conditions.  Select
   # condition block should not contain references to any table column
   # except :recno.  If you need to select by other table columns than just
@@ -516,15 +404,10 @@ class KBTable
 
     # Get all records that match the selection criteria and
     # return them in an array of Struct instances.
-    return get_matches_by_recno_index(:select, filter, select_cond)
+    get_matches_by_recno_index(:select, filter, select_cond)
   end
 
-  #-----------------------------------------------------------------------
-  # pack
-  #-----------------------------------------------------------------------
-  #++
   # Remove blank records from table, return total removed.
-  #
   def pack
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -541,10 +424,6 @@ class KBTable
     return lines_deleted
   end
 
-  #-----------------------------------------------------------------------
-  # rename_column
-  #-----------------------------------------------------------------------
-  #++
   # Rename a column.
   #
   # Make sure you are executing this method while in single-user mode
@@ -552,7 +431,6 @@ class KBTable
   #
   # *old_col_name*:: Symbol of old column name.
   # *new_col_name*:: Symbol of new column name.
-  #
   def rename_column(old_col_name, new_col_name)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -577,10 +455,6 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_type
-  #-----------------------------------------------------------------------
-  #++
   # Change a column's type.
   #
   # Make sure you are executing this method while in single-user mode
@@ -588,7 +462,6 @@ class KBTable
   #
   # *col_name*:: Symbol of column name.
   # *col_type*:: Symbol of new column type.
-  #
   def change_column_type(col_name, col_type)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -611,10 +484,6 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # add_column
-  #-----------------------------------------------------------------------
-  #++
   # Add a column to table.
   #
   # Make sure you are executing this method while in single-user mode
@@ -625,7 +494,6 @@ class KBTable
   #        to add.
   # *after*:: Symbol of column name that you want to add this column
   #       after.
-  #
   def add_column(col_name, col_type, after=nil)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -663,17 +531,12 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # drop_column
-  #-----------------------------------------------------------------------
-  #++
   # Drop a column from table.
   #
   # Make sure you are executing this method while in single-user mode
   # (i.e. not running in client/server mode).
   #
   # *col_name*:: Symbol of column name to add.
-  #
   def drop_column(col_name)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -694,17 +557,12 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # add_index
-  #-----------------------------------------------------------------------
-  #++
   # Add an index to a column.
   #
   # Make sure you are executing this method while in single-user mode
   # (i.e. not running in client/server mode).
   #
   # *col_names*:: Array containing column name(s) of new index.
-  #
   def add_index(*col_names)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -737,17 +595,12 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # drop_index
-  #-----------------------------------------------------------------------
-  #++
   # Drop an index on a column(s).
   #
   # Make sure you are executing this method while in single-user mode
   # (i.e. not running in client/server mode).
   #
   # *col_names*:: Array containing column name(s) of new index.
-  #
   def drop_index(*col_names)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -773,10 +626,6 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_default_value
-  #-----------------------------------------------------------------------
-  #++
   # Change a column's default value.
   #
   # Make sure you are executing this method while in single-user mode
@@ -784,7 +633,6 @@ class KBTable
   #
   # *col_name*:: Symbol of column name.
   # *value*:: New default value for column.
-  #
   def change_column_default_value(col_name, value)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -816,10 +664,6 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # change_column_required
-  #-----------------------------------------------------------------------
-  #++
   # Change whether a column is required.
   #
   # Make sure you are executing this method while in single-user mode
@@ -827,7 +671,6 @@ class KBTable
   #
   # *col_name*:: Symbol of column name.
   # *required*:: true or false.
-  #
   def change_column_required(col_name, required)
     raise "Do not execute this method in client/server mode!" if \
      @db.client?
@@ -851,24 +694,14 @@ class KBTable
     create_table_class unless @db.server?
   end
 
-  #-----------------------------------------------------------------------
-  # total_recs
-  #-----------------------------------------------------------------------
-  #++
   # Return total number of undeleted (blank) records in table.
-  #
   def total_recs
     return @db.engine.get_total_recs(self)
   end
 
-  #-----------------------------------------------------------------------
-  # import_csv
-  #-----------------------------------------------------------------------
-  #++
   # Import csv file into table.
   #
   # *csv_filename*:: filename of csv file to import.
-  #
   def import_csv(csv_filename)
     records_inserted = 0
     tbl_rec = @table_class.new(self)
@@ -883,14 +716,8 @@ class KBTable
     return records_inserted
   end
 
-  #-----------------------------------------------------------------------
-  # PRIVATE METHODS
-  #-----------------------------------------------------------------------
   private
 
-  #-----------------------------------------------------------------------
-  # create_indexes
-  #-----------------------------------------------------------------------
   def create_indexes
     # First remove any existing select_by_index methods.  This is in
     # case we are dropping an index or a column.  We want to make sure
@@ -945,9 +772,6 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # create_table_class
-  #-----------------------------------------------------------------------
   def create_table_class
     #This is the class that will be used in #select condition blocks.
     @table_class = Class.new(KBTableRec)
@@ -1084,12 +908,7 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # validate_filter
-  #-----------------------------------------------------------------------
-  #++
   # Check that filter contains valid field names.
-  #
   def validate_filter(filter)
     # Each field in the filter array must be a valid fieldname in the
     # table.
@@ -1099,12 +918,7 @@ class KBTable
     }
   end
 
-  #-----------------------------------------------------------------------
-  # convert_input_data
-  #-----------------------------------------------------------------------
-  #++
   # Convert data passed to #input, #update, or #set to a common format.
-  #
   def convert_input_data(values)
     temp_hash = {}
 
@@ -1150,12 +964,7 @@ class KBTable
     return temp_hash
   end
 
-  #-----------------------------------------------------------------------
-  # check_required_fields
-  #-----------------------------------------------------------------------
-  #++
   # Check that all required fields have values.
-  #
   def check_required_fields(data)
     @field_names[1..-1].each do |f|
       raise(ArgumentError,
@@ -1164,14 +973,9 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # check_against_input_for_specials
-  #-----------------------------------------------------------------------
-  #++
   # Check that no special field types (i.e. calculated or link_many
   # fields)
   # have been given values.
-  #
   def check_against_input_for_specials(data)
     @field_names[1..-1].each do |f|
       raise(ArgumentError,
@@ -1182,12 +986,7 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # validate_input
-  #-----------------------------------------------------------------------
-  #++
   # Check input data to ensure proper data types.
-  #
   def validate_input(data)
     @field_names[1..-1].each do |f|
       next if data[f].nil?
@@ -1198,12 +997,7 @@ class KBTable
     end
   end
 
-  #-----------------------------------------------------------------------
-  # update_header_vars
-  #-----------------------------------------------------------------------
-  #++
   # Read header record and update instance variables.
-  #
   def update_header_vars
     @encrypted, @last_rec_no, @del_ctr, @record_class, @col_names, \
      @col_types, @col_indexes, @col_defaults, @col_requireds, \
@@ -1218,12 +1012,7 @@ class KBTable
     @field_extras = @col_extras
   end
 
-  #-----------------------------------------------------------------------
-  # get_result_struct
-  #-----------------------------------------------------------------------
-  #++
   # Return Struct object that will hold result record.
-  #
   def get_result_struct(query_type, filter)
     case query_type
     when :select
@@ -1236,12 +1025,7 @@ class KBTable
     return nil
   end
 
-  #-----------------------------------------------------------------------
-  # create_result_rec
-  #-----------------------------------------------------------------------
-  #++
   # Return Struct/custom class populated with table row data.
-  #
   def create_result_rec(query_type, filter, result_struct, tbl_rec, rec)
     # If this isn't a select query or if it is a select query, but
     # the table record class is simply a Struct, then we will use
@@ -1302,15 +1086,10 @@ class KBTable
       result_rec.fpos = rec[-2]
       result_rec.line_length = rec[-1]
     end
-    return result_rec
+    result_rec
   end
 
-  #-----------------------------------------------------------------------
-  # get_matches
-  #-----------------------------------------------------------------------
-  #++
   # Return records from table that match select condition.
-  #
   def get_matches(query_type, filter, select_cond)
     result_struct = get_result_struct(query_type, filter)
     match_array = KBResultSet.new(self, filter, filter.collect { |f|
@@ -1330,13 +1109,8 @@ class KBTable
     return match_array
   end
 
-  #-----------------------------------------------------------------------
-  # get_matches_by_index
-  #-----------------------------------------------------------------------
-  #++
   # Return records from table that match select condition using one of
   # the table's indexes instead of searching the whole file.
-  #
   def get_matches_by_index(query_type, index_fields, filter, select_cond)
     good_matches = []
 
@@ -1375,13 +1149,8 @@ class KBTable
     return get_matches_by_recno(query_type, filter, good_matches)
   end
 
-  #-----------------------------------------------------------------------
-  # get_matches_by_recno_index
-  #-----------------------------------------------------------------------
-  #++
   # Return records from table that match select condition using the
   # table's recno index instead of searching the whole file.
-  #
   def get_matches_by_recno_index(query_type, filter, select_cond)
     good_matches = []
     idx_struct = Struct.new(:recno)
@@ -1398,12 +1167,7 @@ class KBTable
     return get_matches_by_recno(query_type, filter, good_matches)
   end
 
-  #-----------------------------------------------------------------------
-  # get_match_by_recno
-  #-----------------------------------------------------------------------
-  #++
   # Return record from table that matches supplied recno.
-  #
   def get_match_by_recno(query_type, filter, recno)
     result_struct = get_result_struct(query_type, filter)
     match_array = KBResultSet.new(self, filter, filter.collect { |f|
@@ -1419,12 +1183,7 @@ class KBTable
      tbl_rec, rec)
   end
 
-  #-----------------------------------------------------------------------
-  # get_matches_by_recno
-  #-----------------------------------------------------------------------
-  #++
   # Return records from table that match select condition.
-  #
   def get_matches_by_recno(query_type, filter, recnos)
     result_struct = get_result_struct(query_type, filter)
     match_array = KBResultSet.new(self, filter, filter.collect { |f|
@@ -1439,6 +1198,7 @@ class KBTable
       match_array << create_result_rec(query_type, filter,
        result_struct, tbl_rec, rec)
     end
-    return match_array
+    match_array
   end
+
 end

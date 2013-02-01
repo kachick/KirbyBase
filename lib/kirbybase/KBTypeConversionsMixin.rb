@@ -1,13 +1,3 @@
-# Copyright (c) 2005 NetPro Technologies, LLC
-# Distributes under the same terms as Ruby License
-
-require 'date'
-require 'time'
-require 'drb'
-require 'fileutils'
-require 'yaml'
-require 'csv'
-
 module KBTypeConversionsMixin
   # Constant that will represent a kb_nil in the physical table file.
   # If you think you might need to write the value 'kb_nil' to a field
@@ -22,12 +12,7 @@ module KBTypeConversionsMixin
   # Regular expression used to determine if field needs to be encoded.
   ENCODE_RE = /&|\n|\r|\032|\|/
 
-  #-----------------------------------------------------------------------
-  # convert_to_native_type
-  #-----------------------------------------------------------------------
-  #++
   # Return value converted from storage string to native field type.
-  #
   def convert_to_native_type(data_type, s)
     return kb_nil if s == KB_NIL
 
@@ -92,12 +77,7 @@ module KBTypeConversionsMixin
     end
   end
 
-  #-----------------------------------------------------------------------
-  # convert_to_encoded_string
-  #-----------------------------------------------------------------------
-  #++
   # Return value converted to encoded String object suitable for storage.
-  #
   def convert_to_encoded_string(data_type, value)
     return KB_NIL if value.nil?
 
@@ -127,4 +107,5 @@ module KBTypeConversionsMixin
       return value.to_s
     end
   end
+
 end
