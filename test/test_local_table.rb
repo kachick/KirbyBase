@@ -796,3 +796,4 @@ class TestTableLocal < Test::Unit::TestCase
         assert_equal 1, recs.size
     end
 end
+

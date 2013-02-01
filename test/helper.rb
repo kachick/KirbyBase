@@ -1,4 +1,8 @@
-require "tmpdir"
+require 'test/unit'
+require 'tmpdir'
+
+$VERBOSE = true
+require_relative '../lib/kirbybase'
 
 module BaseTest
 	def setup

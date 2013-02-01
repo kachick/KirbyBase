@@ -1,6 +1,6 @@
 # Multi-user server script for KirbyBase.
 
-require 'kirbybase'
+require_relative '../lib/kirbybase'
 require 'drb'
 
 host = ''
